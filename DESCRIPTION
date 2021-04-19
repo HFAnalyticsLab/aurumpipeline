@@ -1,0 +1,44 @@
+Package: aurumpipeline
+Title: Data Processing Pipeline for CRPD Aurum
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Jay",
+           family = "Hughes",
+           role = c("aut", "cre"),
+           email = "jay.hughes@health.org.uk",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Collection of functions to process CPRD data from raw text to parquet files. Checking and helper functions included.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    arrow,
+    bit64,
+    data.table,
+    dplyr,
+    DBI,
+    ggplot2,
+    here,
+    logr,
+    lubridate,
+    magrittr,
+    purrr,
+    readr,
+    readxl,
+    reshape2,
+    stringr,
+    tidyselect,
+    vroom
+Suggests: 
+    aurumLkup,
+    knitr,
+    rmarkdown,
+    RSQLite,
+    sqldf,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Depends: 
+    R (>= 2.10)
+Config/testthat/edition: 3
