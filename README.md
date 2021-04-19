@@ -115,9 +115,9 @@ The following R packages, which are available on CRAN, are required to run the A
 
 The required functions from these packages will be imported when the `aurumpipeline` package is loaded. The whole of the package `data.table` will be imported as many of the processes in `aurumpipeline` make use of it.
 
-There is one other package that the pipeline can make use of - `aurumLkup` which is available for HF staff. If you have that installed then it will enable the pipeline to use all the associated lookup files for CPRD Aurum without having to load them manually. 
+There is one other package that the pipeline can make use of - `aurumLkup` which is available internally for Health Foundation staff. If you have that installed then it will enable the pipeline to use all the associated lookup files for CPRD Aurum without having to load them manually. 
 
-If the `aurumLkup` package is not installed you can provide filepaths to your lookups instead and the pipeline will use those. (In fact you can do that with the `aurumLkup` package loaded as well if you have more up to date versions of them).
+If the `aurumLkup` package is not installed you can provide filepaths to your lookups instead (provided by CPRD) and the pipeline will use those. (In fact you can do that with the `aurumLkup` package loaded as well if you have more up to date versions of them).
 
 ### Storage capacity
 
