@@ -71,7 +71,11 @@ Once the parquet file structure has been created, the following functions can be
 *   `add_age()`: Adds age information to the patient table.
 *   `add_ethnicity()`: Adds ethnicity information to the patient table. Requires a codelist with medcodeids and a number of categories as strings (can be 1 or more).
 
-I have codelist using functions in development including the QOF codelists from NHS Digital and the codelists developed by [Anna Head](github.com/annalhead/CPRD_multimorbidity_codelists) for multimorbidity. Please get in touch if you would like to make use of these.
+I have codelist using functions in development including the QOF codelists from NHS Digital and the codelists developed by [Anna Head](github.com/annalhead/CPRD_multimorbidity_codelists) for multimorbidity.
+
+*   `read_multimorb_codelists()`: Place all the medical condition codelists you wish to use in the the same folder and point this function at it to read them all in and set lookback times (in days) for each in the `read` column. (Feel free to edit that to change how far to look back for each condition)
+*   `get_codes()`: Filter your observation or drugissue data to the relevent codelist(s) you have supplied, as well as date ranges.
+*   `cond_medcodes()`: In long format create a dataset of conditions for each patient in your sample based on the codelist(s) and lookback times supplied.
 
 Other functions are available in the `utils.R` script, and a script containing code to create basic descriptive charts and summaries of checks can be found in `create.R`. **currently removed**
 
