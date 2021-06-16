@@ -218,6 +218,37 @@ patients <- cohort[1:10000]
 obs <- opendt('Observation', patient_list = patients)
 ```
 
+### Applying the codelist functions to flag conditions for each patient
+
+```R
+### example of using new pipeline codelist functions
+## set location of codelists 
+codeloc <- 'Path/to/your/codelist/folder'
+
+## get all codelists
+codelist <- read_multimorb_codelists(codeloc) %>%
+            .[, .(disease, medcodeid, read, system)] ## disease is detailed info, system is grouped
+                                                     ## and read is how far to look back in days
+
+
+## get relevant observations
+diag_obs <- get_codes('Path/to/your/observation/data'
+                     , enddate = '2016-01-01'
+                     , codelist = codelist) 
+
+cond <- cond_medcodes(diag_obs ## data to use
+                      , codelist ## codelist
+                      , 'disease' ## var name of category required to flag for
+                      , '2016-01-01') ## date to look back from
+
+### then get results wide and add flag for each patient:
+results <- cond[ #bind our tables
+            , .(patid, disease, flag = 1)] %>% #restrict to required variables and add a flag variable in (to indicate the ref exists)
+            reshape2::dcast(., ... ~ disease, value.var = 'flag', fill = 0) %>% ## cast long to wide with disease names as field headers
+            setDT() ## back to data.table
+
+```
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE)
