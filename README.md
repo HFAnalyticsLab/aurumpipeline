@@ -69,7 +69,7 @@ Once the parquet file structure has been created, the following functions can be
 *   `check_vars()`: A function to report on missing data and dates from the output of `aurum_pipeline()`.
 *   `check_patid_links()`: A function to check the proportion of all patient ids linking across expected datasets. It returns a proportion that link in the consolse.
 *   `add_age()`: Adds age information to the patient table.
-*   `add_ethnicity()`: Adds ethnicity information to the patient table. Requires a codelist with medcodeids and a number of categories as strings (can be 1 or more).
+*   `add_ethnicity()`: Adds ethnicity information to the patient table. Requires a codelist with medcodeids and a number of categories as strings (can be 1 or more). This uses the modal ethnic medcode, or in the event of a tie, the most recent one.
 
 I have codelist using functions in development including the QOF codelists from NHS Digital and the codelists developed by [Anna Head](github.com/annalhead/CPRD_multimorbidity_codelists) for multimorbidity.
 
