@@ -1,6 +1,6 @@
 # CPRD Aurum Pipeline
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 This is an open-source R package containing pipeline functions to clean and process patient-level CPRD Aurum, with the aim to produce analysis-ready datasets from raw text extracts from CPRD. In addition to this several functions will be included to aid analysis of this data.
@@ -266,6 +266,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://github.com/Jay-ops256"><img src="https://avatars.githubusercontent.com/u/72575101?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jay-ops256</b></sub></a><br /><a href="https://github.com/HFAnalyticsLab/aurumpipeline/commits?author=Jay-ops256" title="Code">💻</a></td>
+    <td align="center"><a href="https://emmavestesson.netlify.com/"><img src="https://avatars.githubusercontent.com/u/31949401?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Emma Vestesson</b></sub></a><br /><a href="https://github.com/HFAnalyticsLab/aurumpipeline/issues?q=author%3Aemmavestesson" title="Bug reports">🐛</a> <a href="#ideas-emmavestesson" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 
