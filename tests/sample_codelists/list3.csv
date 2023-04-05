@@ -1,0 +1,5 @@
+read code,disease,medcode,descr,category,disease_num,system,system_num,medcodeid,snomedctconceptid,snomedctdescriptionid,mapping
+,Intracerebral haemorrhage,,"right sided intracerebral haemorrhage, unspecified",Diagnosis of Intracerebral haemorrhage,85,Diseases of the Circulatory System,2,1.27225E+16,308128006,451441015,originalreadcode
+,Intracerebral haemorrhage,,stroke due to intracerebral haemorrhage,Diagnosis of Intracerebral haemorrhage,85,Diseases of the Circulatory System,2,1.19036E+16,274100004,1.19036E+16,originalreadcode
+662o.00,Intracerebral haemorrhage,28914,Haemorrhagic stroke monitoring,History of Intracerebral haemorrhage,85,Diseases of the Circulatory System,2,2548554013,417506008,2548554013,cleansedreadcode
+7004300,Intracerebral haemorrhage,7017,Evacuation of intracerebral haematoma NEC,Diagnosis of Intracerebral haemorrhage,85,Diseases of the Circulatory System,2,265692011,10458001,279429014,cleansedreadcode

@@ -7,8 +7,8 @@
 #'
 #' @param type character string of Aurum table
 #' @param cols character string of column types (see tabledata with meta data for this)
-#' @param saveloc character string of location to save parquet files - defaults to project/working directory
-#' @param dataloc character string of location of raw data
+#' @param saveloc character string of location to save parquet files - defaults to project/working directory (accepts S3 URIs as well)
+#' @param dataloc character string of location of raw data (accepts S3 URIs as well)
 #' @param patids vector of patient ids to filter to (if known)
 #' @param check boolean run in check mode or regular
 #'
@@ -28,38 +28,80 @@ aurum_pipeline <- function(type
   
   num.load <- Inf
   
+ 
   if (saveloc == '') { ## if no save location default to current project directory
     
-    saveloc = here::here()
+    saveloc <- here::here('Data')
     
   }
   
   if (check) { ## modify based on check status
     
     num.load <- 100
-    saveloc <- paste0(saveloc, '/Data/Check')
+    saveloc <- file.path(saveloc, 'Check')
     
-  } else {
-    
-    saveloc <- paste0(saveloc, '/Data')
-    
-  }
+  } 
   
-  dir.create(saveloc, recursive = TRUE, showWarnings = FALSE)
-  
-  # set up log file
+  ## check if s3 location for save location and set up bucket if so
+  save_s3 <- path_id(saveloc)
+
+    # set up log filename
   name <- substr(as.character(Sys.time()), 1, 16)
   name <- gsub(' ', '_', name)
   name <- paste0('AurumPipeline_', gsub(':', '_', name), '.log')
-  tmp_log <- file.path(saveloc, name)
-  pipeline_log <- logr::log_open(tmp_log)
+  
+  if(save_s3[[3]]){ ## create folder in s3
+  
+    aws.s3::put_folder(save_s3[[1]], bucket = save_s3[[2]])
+    tmp_log <- here::here() ## create local log - move to bucket later
+    pipeline_log <- logr::log_open(tmp_log)
+    
+  } else { ## create folder in saveloc
+    
+    dir.create(saveloc, recursive = TRUE, showWarnings = FALSE)
+    tmp_log <- file.path(saveloc, name)
+    pipeline_log <- logr::log_open(tmp_log)
+    
+  }
+
+  # get pipeline version and git info
+  logr::log_print(paste0('Created with package version ', utils::packageVersion('aurumpipeline')))
+  
+# gitinfo <- git2r::revparse_single(revision = 'HEAD') ## need to specify repo here
+# logr::log_print('Last commit information:')          ## as it defaults to the repo you are in
+# logr::log_print(gitinfo)                             ## errors if not in a repo
+# logr::log_print(gitinfo$author)
+  
   #################################################
   
   output_file <- data.frame()
-  
-  filepaths <- list.files(dataloc, pattern = type, full.names = TRUE) #list raw CPRD filepaths for type
-  
 
+  ## check if s3 location for read location and set up bucket if so
+  read_s3 <- path_id(dataloc)
+  
+  if(read_s3[[3]]){
+    
+    ## s3 method get all files in bucket and codeloc path
+    files <- aws.s3::get_bucket(read_s3[[2]],
+                                prefix = read_s3[[1]],
+                                max = Inf) %>% rbindlist() #look for all files first
+    
+    ## remove subfolders and keep only .txt
+    ## any further '/' will indicate a subfolder so remove them
+    keep_me <- stringr::str_locate_all(pattern = '/', files$Key) %>% mapply(FUN = max) <= nchar(dataloc)
+    files <- files[keep_me, ] %>% unique()
+    fileext <- substr(files$Key, nchar(files$Key) - 3, nchar(files$Key)) == '.txt'
+    files <- files[fileext, ]
+  
+    filepaths <- files$Key
+    filepaths <- filepaths[grep(type, filepaths)]
+    
+  } else {
+    
+    filepaths <- list.files(dataloc, pattern = type, full.names = TRUE) #list raw CPRD filepaths for type
+  
+  }
+  
   for(i in 1:length(filepaths)){ # for each file...
     
     logr::log_print(filepaths[i]) # print the path to the console and log file
@@ -67,9 +109,23 @@ aurum_pipeline <- function(type
     if (is.null(cols)){
       
       # read in the raw data and let vroom sort the column definitions
-      temp <- vroom::vroom(filepaths[i], delim = '\t'
-                           , locale = readr::locale(date_format = '%d/%m/%Y')
-                           , n_max = num.load)
+        if(read_s3[[3]]){
+        
+          temp <- aws.s3::s3read_using(FUN = vroom::vroom,
+                                       object = filepaths[i],
+                                       bucket = read_s3[[2]],
+                                       delim = '\t',
+                                       locale = readr::locale(date_format = '%d/%m/%Y'),
+                                       n_max = num.load)
+          
+        } else {
+          
+          temp <- vroom::vroom(filepaths[i],
+                               delim = '\t',
+                               locale = readr::locale(date_format = '%d/%m/%Y'),
+                               n_max = num.load)
+          
+        }  
       
       ## if medcodeid exists then set it to integer64
       med_check <- names(temp)[stringr::str_detect(names(temp), 'medcodeid')]
@@ -89,12 +145,28 @@ aurum_pipeline <- function(type
         
       }
       
-    } else {
-    
-      # read in the raw data with coltype definitions supplied
-      temp <- vroom::vroom(filepaths[i], delim = '\t'
-                         , col_types = cols, locale = readr::locale(date_format = '%d/%m/%Y')
-                         , n_max = num.load)
+    } else { # read in the raw data with coltype definitions supplied
+      
+      if(read_s3[[3]]){
+        
+        temp <- aws.s3::s3read_using(FUN = vroom::vroom,
+                                     object = filepaths[i],
+                                     bucket = read_s3[[2]],
+                                     delim = '\t',
+                                     locale = readr::locale(date_format = '%d/%m/%Y'),
+                                     n_max = num.load,
+                                     col_types = cols)
+        
+      } else {
+      
+        temp <- vroom::vroom(filepaths[i],
+                             delim = '\t',
+                             col_types = cols,
+                             locale = readr::locale(date_format = '%d/%m/%Y'),
+                             n_max = num.load)
+        
+      }
+      
     }
     
     if (type != 'Staff' & type != 'Practice' & check == FALSE & !is.null(patids)){
@@ -103,10 +175,28 @@ aurum_pipeline <- function(type
       
     }
     
+    ## clean column names
+    names(temp) <- tolower(names(temp))
+    names(temp) <- gsub('e_', '', names(temp))
+    
+    ## Write parquet file to appropriate location
+    
+  if(save_s3[[3]]){
+    
+    aws.s3::put_folder(paste0(save_s3[[1]], type, '/', i), bucket = save_s3[[2]])
+    aws.s3::s3write_using(temp,
+                  arrow::write_parquet,
+                  object = paste0(save_s3[[1]], type, '/', i, '/data.parquet'),
+                  bucket = save_s3[[2]])
+    
+  } else {
+    
     # create a folder named /Data/type/i
     dir.create(file.path(saveloc, type, i), recursive = TRUE, showWarnings = FALSE)
     # write the parquet data file
     arrow::write_parquet(temp, file.path(saveloc, type, i, 'data.parquet'))
+    
+  }
     
     # define function within loop to avoid environment issue with nested functions
     check_vals <- function(data_in, cols_in, func_in){
@@ -154,8 +244,8 @@ aurum_pipeline <- function(type
     logr::log_print(test)
     
   }
-  
+
+  logr::log_close() ## Move log to s3 bucket or keep local?
   return(output_file) ## results of checks
-  logr::log_close()
   
 }

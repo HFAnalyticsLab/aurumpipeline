@@ -1,7 +1,7 @@
 ### opendt function with extra filter for patient ids
 #' Open Data Table
 #'
-#' @param data_in character filepath to data. If data saved in standard structure from aurum_pipeline()
+#' @param data_in character filepath to data or an S3 URI. If data saved in standard structure from aurum_pipeline()
 #' then only table name is required, eg 'Observation', otherwise use full file path.
 #' @param cols_in character vector of column names to load in
 #' @param date_in character name of date field to filter on
@@ -27,8 +27,8 @@ opendt <- function(data_in, cols_in = NULL
     
   } ## otherwise open at specified path
   
-  pq <- arrow::open_dataset(data_in)  #open parquet dataset at data_in
-  
+  pq <- arrow::open_dataset(data_in) 
+    
   if(!is.null(date_in)){ #if a date col is provided...
     pq <- pq %>% dplyr::filter(get(date_in) >= as.Date(start_date), get(date_in) <= as.Date(end_date)) #filter date_in to between start_date & end_date
   }

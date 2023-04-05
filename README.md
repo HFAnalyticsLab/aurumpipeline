@@ -1,7 +1,4 @@
-# CPRD Aurum Pipeline
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+# CPRD Aurum Pipeline 0.1.2
 
 This is an open-source R package containing pipeline functions to clean and process patient-level CPRD Aurum, with the aim to produce analysis-ready datasets from raw text extracts from CPRD. In addition to this several functions will be included to aid analysis of this data.
 
@@ -9,7 +6,7 @@ This is an open-source R package containing pipeline functions to clean and proc
 
 ## Project Description
 
-[Clinical Pracatice Research Datalink (CPRD) Aurum](https://www.cprd.com/article/data-resource-profile-cprd-aurum) is a database containing 
+[Clinical Practice Research Datalink (CPRD) Aurum](https://www.cprd.com/article/data-resource-profile-cprd-aurum) is a database containing 
 details of routinely collected primary care data from EMIS IT systems in consenting general practices across England and Northern Ireland.
 
 CPRD Aurum captures diagnoses, symptoms, prescriptions, referrals and test for over 19 million patients (as of Sept 2018). This data has been linked to national secondary care databases as well as deprivation and death registration data (not currently processed by this pipeline).
@@ -20,9 +17,7 @@ The semi-automated cleaning and processing workflow we are developing in this pa
 
 ## Data Source
 
-This study is based in part on data from the Clinical Practice Research Datalink obtained under license from the UK Medicines and Healthcare products Regulatory Agency (approved study protocol number #21_000333). The data is provided by patients and collected by the NHS as part of their care and support. The interpretation and and conclusions contained in this study are those of the author alone.
-
-The data will be accessed in The Health Foundation's Secure Data Environment; a secure data analysis facility (accredited with the ISO27001 information security standard, and recognised for the NHS Digital Data Security and Protection Toolkit). No information that could directly identify a patient or other individual will be used.
+We are using the newly released synthetic CPRD Aurum dataset.
 
 ## Documentation
 
@@ -38,17 +33,11 @@ There is documentation available for all the functions and package metadata by u
 
 ## How does it work?
 
-As the Aurum data prepared in this pipeline is not publicly available, the code 
-cannot be used to replicate the same clean data and database. However, the code 
-can be used on similar extracts to prepare the datasets for analysis. This readme will detail the intended workflow to process the raw CPRD output using this pipeline.
+As the Aurum data prepared in this pipeline is not publicly available, the code cannot be used to replicate the same clean data and database. However, the code can be used on similar extracts to prepare the datasets for analysis. This readme will detail the intended workflow to process the raw CPRD output using this pipeline.
 
-The pipeline works by creating a specific file structure that defaults to within your project folder or working directory that is required to exist for some functions to work correctly. This is a partly a design decision to simplify calls to functions and data but also a requirement and benefit of using parquet files from the `arrow` package. For that reason then it is suggested to run the initial pipeline function `aurum_pipeline()` from within a new project and in it's base directory. The pipeline will create a data folder with subdirectories based on the number and size of the CPRD files you have in your sample.
+The pipeline works by creating a specific file structure that defaults to within your project folder or working directory that is required to exist for some functions to work correctly. It will create folders starting with a `Data\` folder within your working directory. This is a partly a design decision to simplify calls to functions and data but also a requirement and benefit of using parquet files from the `arrow` package. For that reason then it is suggested to run the initial pipeline function `aurum_pipeline()` from within a new project and in it's base directory. The pipeline will create the data folder with subdirectories based on the number and size of the CPRD files you have in your sample.
 
-Alternatively if multiple people are working on the same sample the data location can be specified and the structure mentioned above will be created there instead.
-
-This allows easy loading of the data with the `opendt()` function, which is itself used within other functions quite often. If over time this becomes restrictive to users I am happy to revisit this structure.
-
-If your project is also on GitHub or elsewhere you can keep your processed data safe by adding the `data` folder to `.gitignore` by adding a line with `data/`.
+Version 0.1.2 of this package has been updated to run on AWS and can accept S3 URIs as well as regular filepaths for reading and writing of data.
 
 ### Pipeline design and features 
 
@@ -56,7 +45,7 @@ The pipeline has been divided into a set of functions, many of which are optiona
 
 This first stage of the pipeline can by run in two modes:
 
-*   **Regular mode** creates a new set of parquet files from scratch (this is the default). 
+*   **Regular mode** creates a new set of parquet files from scratch (this is the default) within a subdirectory called `Data\`.
 *   **Check mode** creates the same set of parquet files but only using 100 records per raw text file (if `check = TRUE`), and within a subdirectory called `Data\Check`. 
 *   In both modes this function will, for each table specified:
 
@@ -65,34 +54,23 @@ This first stage of the pipeline can by run in two modes:
     + cleaning variables
     + report on any missing data
     + save the data as parquet files partitioned by the number of raw files used
-    
-Once the parquet file structure has been created, the following functions can be used to access and modify them:
+
+Other functions to be detailed below can then act on the created file system. These are (in suggested use order):
 
 *   `opendt()`: A function to open the data from the parquet files created above. Used by the majority of other functions.
 *   `check_vars()`: A function to report on missing data and dates from the output of `aurum_pipeline()`.
 *   `check_patid_links()`: A function to check the proportion of all patient ids linking across expected datasets. It returns a proportion that link in the consolse.
+*   `derive_cons()`: A function to classify consultations based on medcodeid lookups and consultation source, as well as staff role. Relies on a lookup table currently in development. Creates a new consultation table with extra information.
+*   `derive_obs()`: A function to link observation data with all relevent lookups, observation type, staff role and the EMIS medical dictionary. Creates a new observation table with the extra information.
+*   `cons_obs_link()`: Creates a linked table of the above two derivations, whereby all relevent observation information is linked to its consultation. Not all observations are linked this way, and it is designed to work on a defined patient list rather than the entire dataset due to memory contraints.
 *   `add_age()`: Adds age information to the patient table.
 *   `add_ethnicity()`: Adds ethnicity information to the patient table. Requires a codelist with medcodeids and a number of categories as strings (can be 1 or more). This uses the modal ethnic medcode, or in the event of a tie, the most recent one.
+*   `read_multimorb_codelists()`: Can read in a set of files (typically csv or xlsx) containing clinical codelists and combine them into a format that is used to easily filter your observation data.
+*   `get_codes()` and `cond_medcodes()` are a flexible way to identify conditions in patients using observation data. They require pre-defined codelists of conditions to search for.
 
-I have codelist using functions in development including the QOF codelists from NHS Digital and the codelists developed by [Anna Head](github.com/annalhead/CPRD_multimorbidity_codelists) for multimorbidity.
-
-*   `read_multimorb_codelists()`: Place all the medical condition codelists you wish to use in the the same folder and point this function at it to read them all in and set lookback times (in days) for each in the `read` column. (Feel free to edit that to change how far to look back for each condition)
-*   `get_codes()`: Filter your observation or drugissue data to the relevent codelist(s) you have supplied, as well as date ranges.
-*   `cond_medcodes()`: In long format create a dataset of conditions for each patient in your sample based on the codelist(s) and lookback times supplied.
-
-Other functions are available in the `utils.R` script, and a script containing code to create basic descriptive charts and summaries of checks can be found in `create.R`. **currently removed**
+I have other codelist using functions in development including the QOF codelists from NHS Digital and the codelists developed by [Anna Head](github.com/annalhead/CPRD_multimorbidity_codelists) for multimorbidity.
 
 ## Installation
-
-Download the Aurum Pipeline source code using one of these links:
-[downloading](https://github.com/HFAnalyticsLab/aurumpipeline/archive/refs/heads/main.zip) 
-or cloning the repo with 
-[ssh](git@github.com:HFAnalyticsLab/aurumpipeline.git)
-or [https](https://github.com/HFAnalyticsLab/aurumpipeline.git).
-
-Alternatively install the package directly using the `devtools` package:
-
-`devtools::install_github('HFAnalyticsLab/aurumpipeline')`
 
 ## Requirements
 
@@ -102,10 +80,9 @@ The CPRD Aurum pipeline was built under R version 4.0.3 (2020-10-10) -- "Bunny-W
 
 The following R packages, which are available on CRAN, are required to run the Aurum pipeline:
 
-*   arrow (3.0.0)
+*   arrow (3.0.0) (arrow version 8.0.0 is required for full S3 functionality)
 *   bit64 (4.0.5)
 *   data.table (1.13.6)
-*   DBI (1.1.1)
 *   dplyr (1.0.4)
 *   ggplot2 (3.3.3)
 *   here (1.0.1)
@@ -122,13 +99,9 @@ The following R packages, which are available on CRAN, are required to run the A
 
 The required functions from these packages will be imported when the `aurumpipeline` package is loaded. The whole of the package `data.table` will be imported as many of the processes in `aurumpipeline` make use of it.
 
-There is one other package that the pipeline can make use of - `aurumLkup` which is available internally for Health Foundation staff. If you have that installed then it will enable the pipeline to use all the associated lookup files for CPRD Aurum without having to load them manually. 
+There is one other package that the pipeline can make use of - `aurumLkup` which is hosted on GitLab `http://thf-gitlab.prd-dtl.dap.health.org.uk/28110-Jayh/aurum-lkup` in DAP as well as available in a shared resource bucket as a package binary. If you have that installed then it will enable the pipeline to use all the associated lookup files for CPRD Aurum without having to load them manually. Different versions of the package contain different database build lookups.
 
-If the `aurumLkup` package is not installed you can provide filepaths to your lookups instead (provided by CPRD) and the pipeline will use those. (In fact you can do that with the `aurumLkup` package loaded as well if you have more up to date versions of them).
-
-### Storage capacity
-
-The location where the database is created needs to have sufficient storage space available, roughly equivalent to the combined file size of the raw CPRD data extract (~50GB in our sample) plus the file size of the parquet data set (~18GB).
+If the `aurumLkup` package is not installed you can provide filepaths to your lookups instead and the pipeline will use those. (In fact you can do that with the `aurumLkup` package loaded as well if you have more up to date versions of them).
 
 ## Running the pipeline 
 
@@ -151,12 +124,12 @@ There are other lookups commonly available but these are not currently reference
 There are only 2 required arguments for the `aurum_pipeline()` function:
 
 * type: The table you want to process from your CPRD Aurum extract
-* dataloc: A character path to your data directory
+* dataloc: A character path to your data directory, or the S3 URI
 
 Optional arguments can be supplied if non-standard processing is required:
 
 * cols: A character string to force data types to columns - use if a specific datatype is required or if the standard assigning by `vroom::vroom` is not correct
-* saveloc: An alternative filepath to a location on disk where the Aurum parquet files will be created
+* saveloc: An alternative filepath to a location on disk or an S3 URI where the Aurum parquet files will be created
 * patids: If a specific sample of patients is known, supplying a vector of their patient ids will limit the processing to just these patients' data.
 * check: Run in check mode as described above
 
@@ -171,16 +144,18 @@ Currently the pipeline is designed to run in an RStudio session. Once the packag
 Then set the correct paths to locations described above. The first function to call is: `aurum_pipeline()`, providing as arguments the data type, the column data definitions (to be found in `tabledata`), and if required, and a boolean to enable check mode and a vector of patient ids to filter to. For example - to process the raw observation data:
 
 ```R
-> obs <- aurum_pipeline(type = 'Observation'
-                        , cols = 'ddidDDddIdiiddd')
-                        , dataloc = 'pathtomy/data')
+> obs <- aurum_pipeline(type = 'Observation',
+                        cols = 'ddidDDddIdiiddd', 
+                        dataloc = 'pathtomy/rawdata',
+                        saveloc = 'path where data should be saved')
 ```
 Using the metadata supplied in the package this can be written as:
 
 ```R
-> obs <- aurum_pipeline(type = tabledata$table_name[1]
-                        , cols = tabledata$cols[1]
-                        , dataloc = 'pathtomy/data')
+> obs <- aurum_pipeline(type = tabledata$table_name[1],
+                        cols = tabledata$cols[1].
+                        dataloc = 'pathtomy/data', 
+                        saveloc = 'path where data should be saved')
 ```
 
 The data will be processed and saved as parquet files, and the results of the checks saved to the object obs. If all raw files are to be processed (a common use case), then run the pipeline function through a loop or your favourite vectorised operation. This can take a reasonably long time, system and raw extract size considered.
@@ -192,10 +167,10 @@ res_checks <- data.frame()
 
 for (j in 1:nrow(tabledata)){
   
-  res <- aurum_pipeline(type = tabledata$table_name[j]
-                        , cols =  tabledata$cols[j]
-                        , dataloc = 'pathtomy/data'
-                        , check = TRUE)
+  res <- aurum_pipeline(type = tabledata$table_name[j], 
+                        cols =  tabledata$cols[j],
+                        dataloc = 'pathtomy/data',
+                        check = TRUE)
   res_checks <- rbind(res, res_checks)
 
 } 
@@ -226,16 +201,16 @@ obs <- opendt('Observation', patient_list = patients)
 ```R
 ### example of using new pipeline codelist functions
 ## set location of codelists 
-codeloc <- 'Path/to/your/codelist/folder'
+codeloc <- 'R:/CPRD documentation/CPRD_multimorbidity_codelists_main/codelists'
 
 ## get all codelists
 codelist <- read_multimorb_codelists(codeloc) %>%
-            .[, .(disease, medcodeid, read, system)] ## disease is detailed info, system is grouped
+            .[, .(disease, medcodeid, read, system)] ## disease is detail, system is grouped
                                                      ## and read is how far to look back in days
 
 
 ## get relevant observations
-diag_obs <- get_codes('Path/to/your/observation/data'
+diag_obs <- get_codes(here::here('Data', 'Observation')
                      , enddate = '2016-01-01'
                      , codelist = codelist) 
 
@@ -255,24 +230,3 @@ results <- cond[ #bind our tables
 ## License
 
 This project is licensed under the [MIT License](LICENSE)
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/Jay-ops256"><img src="https://avatars.githubusercontent.com/u/72575101?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jay-ops256</b></sub></a><br /><a href="https://github.com/HFAnalyticsLab/aurumpipeline/commits?author=Jay-ops256" title="Code">💻</a></td>
-    <td align="center"><a href="https://emmavestesson.netlify.com/"><img src="https://avatars.githubusercontent.com/u/31949401?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Emma Vestesson</b></sub></a><br /><a href="https://github.com/HFAnalyticsLab/aurumpipeline/issues?q=author%3Aemmavestesson" title="Bug reports">🐛</a> <a href="#ideas-emmavestesson" title="Ideas, Planning, & Feedback">🤔</a></td>
-  </tr>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

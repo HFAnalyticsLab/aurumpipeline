@@ -7,9 +7,9 @@
 read_multimorb_codelists(codeloc, file_pattern = NULL, coltypes = NULL)
 }
 \arguments{
-\item{codeloc}{Character string filespath to folder containing the codelists}
+\item{codeloc}{Either a character string filepath to folder containing the codelists, or an s3 URI}
 
-\item{file_pattern}{Use only the codelists with this in their name}
+\item{file_pattern}{Use only the codelists with this in their name (currently non-s3 only)}
 
 \item{coltypes}{If data types are known}
 }

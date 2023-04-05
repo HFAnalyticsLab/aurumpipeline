@@ -1,6 +1,6 @@
 Package: aurumpipeline
 Title: Data Processing Pipeline for CRPD Aurum
-Version: 0.0.0.9000
+Version: 0.1.2
 Authors@R: 
     person(given = "Jay",
            family = "Hughes",
@@ -12,13 +12,13 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 Imports: 
     arrow,
+    aws.s3,
     bit64,
     data.table,
     dplyr,
-    DBI,
     ggplot2,
     here,
     logr,
@@ -35,10 +35,8 @@ Suggests:
     aurumLkup,
     knitr,
     rmarkdown,
-    RSQLite,
-    sqldf,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Depends: 
-    R (>= 2.10)
+    R (>= 3.5.0)
 Config/testthat/edition: 3

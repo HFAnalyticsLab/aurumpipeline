@@ -1,0 +1,4 @@
+read code,disease,medcode,descr,category,disease_num,system,system_num,medcodeid,snomedctconceptid,snomedctdescriptionid,mapping
+NA,cancer,NA,Irritable bowel - IBS,NA,86,Diseases of the Digestive System,3,8.86E+14,10743008,8.86E+14,termsearch
+NA,cancer,NA,[RFC] Irritable bowel syndrome (IBS),NA,86,Diseases of the Digestive System,3,9.06E+14,9.06E+14,9.06E+14,termsearch
+8Cm..00,cancer,104591,Management of irritable bowel syndrome,Diagnosis of Irritable bowel syndrome,86,Diseases of the Digestive System,3,2.13E+15,8.18E+14,2.13E+15,cleansedreadcode

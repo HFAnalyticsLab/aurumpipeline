@@ -18,9 +18,9 @@ aurum_pipeline(
 
 \item{cols}{character string of column types (see tabledata with meta data for this)}
 
-\item{saveloc}{character string of location to save parquet files - defaults to project/working directory}
+\item{saveloc}{character string of location to save parquet files - defaults to project/working directory (accepts S3 URIs as well)}
 
-\item{dataloc}{character string of location of raw data}
+\item{dataloc}{character string of location of raw data (accepts S3 URIs as well)}
 
 \item{patids}{vector of patient ids to filter to (if known)}
 

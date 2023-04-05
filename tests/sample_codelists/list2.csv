@@ -1,0 +1,5 @@
+read code,disease,medcode,descr,category,disease_num,system,system_num,medcodeid,snomedctconceptid,snomedctdescriptionid,mapping
+NA,Intervertebral disc disorders,NA,Lumbar radiculopathy,NA,84,Musculoskeletal conditions,12,4.40534E+15,128196005,206420017,termsearch
+NA,Intervertebral disc disorders,NA,Post laminectomy syndrome,NA,84,Musculoskeletal conditions,12,8.90921E+14,27151001,8.90921E+14,termsearch
+7J20600,Intervertebral disc disorders,38447,Primary anterior excision of cervical intervertebr disc NEC,Procedure for Intervertebral disc disorders,84,Musculoskeletal conditions,12,2.09141E+14,448206004,1.78043E+15,cleansedreadcode
+7J20700,Intervertebral disc disorders,22434,Primary microdiscectomy of cervical intervertebral disc,Procedure for Intervertebral disc disorders,84,Musculoskeletal conditions,12,276277012,178526006,276277012,cleansedreadcode

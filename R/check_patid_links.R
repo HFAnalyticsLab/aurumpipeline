@@ -20,13 +20,13 @@ check_patid_links <- function(dataloc = ''
     
   }
   
-  pats <- opendt(file.path(dataloc, 'Data', 'Patient')
+  pats <- opendt(file.path(dataloc, 'Patient')
                  , cols_in = c('patid')) %>% .[, linked := TRUE] #open patient dataset and add flag for use below
   
   #Function to check linkage of patients to activity datasets
   check_linkage <- function(activity_in){
     
-    m1 <- opendt(data_in = file.path(dataloc, 'Data', activity_in)
+    m1 <- opendt(data_in = file.path(dataloc, activity_in)
                  , cols_in = 'patid') %>% #open activity data
       merge(pats, by = 'patid', all.x = TRUE) #merge patients onto activity data
     r <- nrow(m1) #get number of rows in merged/activity data 
