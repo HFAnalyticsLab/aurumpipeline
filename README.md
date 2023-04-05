@@ -94,6 +94,10 @@ Alternatively install the package directly using the `devtools` package:
 
 `devtools::install_github('HFAnalyticsLab/aurumpipeline')`
 
+Or the updated version for aws environments using s3 storage:
+
+`devtools::install_github('HFAnalyticsLab/aurumpipeline@s3_update_dev')`
+
 ## Requirements
 
 ### Software and R packages
