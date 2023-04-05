@@ -72,6 +72,20 @@ I have other codelist using functions in development including the QOF codelists
 
 ## Installation
 
+Download the Aurum Pipeline source code using one of these links:
+[downloading](https://github.com/HFAnalyticsLab/aurumpipeline/archive/refs/heads/main.zip) 
+or cloning the repo with 
+[ssh](git@github.com:HFAnalyticsLab/aurumpipeline.git)
+or [https](https://github.com/HFAnalyticsLab/aurumpipeline.git).
+
+Alternatively install the package directly using the `devtools` package:
+
+`devtools::install_github('HFAnalyticsLab/aurumpipeline')`
+
+Or the updated version for aws environments using s3 storage:
+
+`devtools::install_github('HFAnalyticsLab/aurumpipeline@s3_update_dev')`
+
 ## Requirements
 
 ### Software and R packages
