@@ -9,6 +9,7 @@ tmpdir <- tempdir()
 
 ### data location for tests (CMD check tests run in different wd to devtools::test())
 test_loc <- here::here() %>% gsub('tests/testthat/', '', ., fixed = TRUE)
+syn_data_loc <- 's3://thf-dap-tier0-raw-cprdsynthetic-b-tfywm4keew76/synAurumRelease_txtfiles/'
 
 ## identify whether running on AWS
 
