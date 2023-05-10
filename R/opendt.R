@@ -30,24 +30,27 @@ opendt <- function(data_in, cols_in = NULL
   pq <- arrow::open_dataset(data_in) 
     
   if(!is.null(date_in)){ #if a date col is provided...
+    
     pq <- pq %>% dplyr::filter(get(date_in) >= as.Date(start_date), get(date_in) <= as.Date(end_date)) #filter date_in to between start_date & end_date
+  
   }
   
   if(!is.null(cols_in)){ #if a col_in is provided...
-    pq <- pq %>%    
-      dplyr::select(tidyselect::all_of(cols_in)) #select all cols in cols_in
+    
+    pq <- pq %>% dplyr::select(tidyselect::all_of(cols_in)) #select all cols in cols_in
+    
   }
   
-  pq <- pq %>% dplyr::collect() %>% #collect data
-                data.table::as.data.table() #set as data table
-  
+
   if(!is.null(patient_list)){ # if a patient id list is provided
     
     pq <- pq %>% dplyr::filter(patid %in% patient_list$patid) # use only the patients in the list
     
   }
   
-  return(pq) #return dataset
-  
+  pq %>% dplyr::collect() %>% #collect data
+    data.table::as.data.table() %>% #set as data table
+    
+    return() #return dataset
 }
 
