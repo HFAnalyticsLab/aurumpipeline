@@ -38,16 +38,16 @@ opendt <- function(data_in, cols_in = NULL
       dplyr::select(tidyselect::all_of(cols_in)) #select all cols in cols_in
   }
   
+  pq <- pq %>% dplyr::collect() %>% #collect data
+                data.table::as.data.table() #set as data table
+  
   if(!is.null(patient_list)){ # if a patient id list is provided
     
     pq <- pq %>% dplyr::filter(patid %in% patient_list$patid) # use only the patients in the list
     
   }
   
-  pq %>% dplyr::collect() %>% #collect data
-    data.table::as.data.table() %>% #set as data table
-    
-    return() #return dataset
+  return(pq) #return dataset
   
 }
 
