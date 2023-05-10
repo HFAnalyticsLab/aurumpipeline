@@ -5,8 +5,8 @@ obs_check <- aurum_pipeline(type = 'Observation' ### create obs parquet (not ava
                  , saveloc = tmpdir
                  , check = TRUE)
   
-eth_obs <- opendt(file.path(tmpdir, 'Observation')) ## can open the file
-  
+eth_obs <- opendt(file.path(tmpdir, 'Check/Observation/')) ## can open the file
+
 eth_codelist <- data.table::data.table(
      
     medcodeid = sample(eth_obs$medcodeid, 20, replace = TRUE)
