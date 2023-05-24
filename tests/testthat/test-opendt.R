@@ -2,20 +2,20 @@
 
 test_that('Opendt works correctly', {
   
-  expect_error(opendt(file.path(tmpdir, 'Patient')), NA) ## can open the file
+  expect_error(opendt(file.path(data_proc, 'Patient')), NA) ## can open the file
   
-  expect_error(opendt(file.path(tmpdir, 'Patient'),
+  expect_error(opendt(file.path(data_proc, 'Patient'),
                       cols_in = c('patid', 'gender')),
                NA) ## can open the file with column specification
   
-  expect_error(opendt(file.path(tmpdir, 'Patient'),
+  expect_error(opendt(file.path(data_proc, 'Patient'),
                       date_in = 'regstartdate',
                       start_date = '2021-01-01',
                       end_date = '2018-01-01'),
                NA) ## can open the file with date specification
   
   patlist <- data.table(patid = 5371880837297113105)
-  expect_error(opendt(file.path(tmpdir, 'Patient'),
+  expect_error(opendt(file.path(data_proc, 'Patient'),
                       patient_list = patlist),
                NA) ## can open the file with patient list
   
