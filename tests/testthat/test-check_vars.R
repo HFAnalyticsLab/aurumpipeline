@@ -2,11 +2,11 @@
 
 ## create pipeline output
 pat_output <- aurum_pipeline(type = 'Patient'
-                             , dataloc = here::here('tests')
+                             , dataloc = syn_data_loc
                              , saveloc = tmpdir)
 
 obs_output <- aurum_pipeline(type = 'Observation' ### create obs parquet (should be available for all)
-                            , dataloc = here::here('tests')
+                            , dataloc = syn_data_loc
                             , saveloc = tmpdir)
 
 test_that('checkvars can combine pipeline output', {

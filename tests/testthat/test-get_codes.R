@@ -1,11 +1,4 @@
 
-
-
-## create obs parquet file
-aurum_pipeline(type = 'Observation'
-               , dataloc = here::here('tests')
-               , saveloc = tmpdir)
-
 ## load codelists
 codes <- read_multimorb_codelists(codeloc = here::here('tests', 'sample_codelists'),
                                   file_pattern = 'list')
@@ -16,7 +9,7 @@ codes <- read_multimorb_codelists(codeloc = here::here('tests', 'sample_codelist
 
 test_that('We can match run the function without error', {
   
-  expect_error(get_codes(dataloc = file.path(tmpdir, 'Observation/1/data.parquet'),
+  expect_error(get_codes(dataloc = file.path(data_proc, 'Observation'),
                         enddate = as.Date('2020-01-01'),
                         codelist = codes)
                , NA)

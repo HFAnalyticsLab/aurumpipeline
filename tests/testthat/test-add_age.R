@@ -1,6 +1,6 @@
 
 aurum_pipeline(type = 'Patient' ### create patient parquet
-               , dataloc = file.path(test_loc, 'tests')
+               , dataloc = syn_data_loc
                , saveloc = tmpdir)
   
 pats <- opendt(file.path(tmpdir, 'Patient/')) ## open pats

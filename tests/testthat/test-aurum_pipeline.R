@@ -37,7 +37,7 @@ test_that('Pipeline creates file that can be read', {
   #expect_false(file.exists(file.path(tmpdir, 'data/Patient/1/data.parquet'))) ## doesn't exist to start with
   
   aurum_pipeline(type = 'Patient'
-                 , dataloc = here::here('tests')
+                 , dataloc = syn_data_loc
                  , saveloc = tmpdir)
   
   expect_true(file.exists(file.path(tmpdir, 'Patient/1/data.parquet'))) ## does now
@@ -45,12 +45,12 @@ test_that('Pipeline creates file that can be read', {
   expect_error(arrow::read_parquet(file.path(tmpdir, 'Patient/1/data.parquet')), NA) ## can open the file
   
   expect_error(aurum_pipeline(type = 'Patient'
-                              , dataloc = here::here('tests')
+                              , dataloc = syn_data_loc
                               , saveloc = tmpdir),
                NA) ## no errors running pipeline function
 
   expect_error(aurum_pipeline(type = 'Patient'
-                              , dataloc = here::here('tests')
+                              , dataloc = syn_data_loc
                               , saveloc = tmpdir
                               , check = TRUE
                               , patids = 5371880837297113105),
@@ -73,7 +73,7 @@ if(aws){
   test_that('Pipeline creates file that can be read', {
 
     aurum_pipeline(type = 'Staff'
-                   , dataloc = 's3://thf-dap-tier3-raw-ihtcprd54-b-y6ti0r98jo5/D054 Ethnicity and Healthcare Utilisation Aurum Feasibility V1/'
+                   , dataloc = syn_data_loc
                    , saveloc = tmpdir
                    , cols = 'dii'
                    , check = TRUE)
@@ -87,15 +87,14 @@ if(aws){
     } 
     
     aurum_pipeline(type = 'Staff'
-                   , dataloc = 's3://thf-dap-tier3-raw-ihtcprd54-b-y6ti0r98jo5/D054 Ethnicity and Healthcare Utilisation Aurum Feasibility V1/'
+                   , dataloc = syn_data_loc
                    , saveloc = tmpdir
                    , check = TRUE)
     
     expect_true(file.exists(file.path(tmpdir, 'Check/Staff/1/data.parquet'))) ## does now
-    
-    
+   
     }) # end test that
-  
+
     ## clean up after testing
     if (file.exists(file.path(tmpdir, 'Check/Staff/1/data.parquet'))){
       
