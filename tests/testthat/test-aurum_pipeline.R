@@ -92,10 +92,9 @@ if(aws){
                    , check = TRUE)
     
     expect_true(file.exists(file.path(tmpdir, 'Check/Staff/1/data.parquet'))) ## does now
-    
-    
+   
     }) # end test that
-  
+
     ## clean up after testing
     if (file.exists(file.path(tmpdir, 'Check/Staff/1/data.parquet'))){
       
