@@ -42,8 +42,8 @@ if(aws){
   
   test_that('we can read in codelists from S3', {
     
-    expect_error(read_multimorb_codelists(codeloc = 's3://thf-dap-tier3-projects-ihtethutil63-projectbucket-1uajblof2q12b/Data/Codelists/asthma_exception/',
-                                          file_pattern = '.csv')
+    expect_error(read_multimorb_codelists(codeloc = codelist_loc,
+                                          file_pattern = 'acne.csv')
                  , NA)
     })
   
