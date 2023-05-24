@@ -1,5 +1,7 @@
 # CPRD Aurum Pipeline 0.1.2
 
+ [![R-CMD-check](https://github.com/HFAnalyticsLab/aurumpipeline/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/HFAnalyticsLab/aurumpipeline/actions/workflows/R-CMD-check.yaml)
+ 
 This is an open-source R package containing pipeline functions to clean and process patient-level CPRD Aurum, with the aim to produce analysis-ready datasets from raw text extracts from CPRD. In addition to this several functions will be included to aid analysis of this data.
 
 #### Project Status: in progress
